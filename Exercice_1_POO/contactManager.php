@@ -32,4 +32,38 @@ class ContactManager
 
         return $contacts;
     }
+
+    // Méthode pour récupérer un contact par son ID ou son nom
+    public function findById($id)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM contacts WHERE id = ?");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            $contact = new contact();
+            $contact->setId($row['id']);
+            $contact->setName($row['name']);
+            $contact->setEmail($row['email']);
+            $contact->setPhone($row['phone_number']);
+            return $contact;
+        } else {
+            echo "contact non trouvé.\n";
+            return null;
+        }
+    }
+
+    // Méthode pour créer un nouveau contact
+    public function createContact($name, $email, $phone)
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO contacts (name, email, phone_number) VALUES (?, ?, ?)");
+        $stmt->execute([$name, $email, $phone]);
+    }
+
+    // Méthode pour supprimer un contact par son ID
+    public function deleteContact($id)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM contacts WHERE id = ?");
+        $stmt->execute([$id]);
+    }
 }
